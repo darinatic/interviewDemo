@@ -25,7 +25,7 @@ export default function App() {
     // Open on the scenario with the fullest arc: judges split, the orchestrator spends
     // compute, the split resolves, and the one thing compute could not settle goes to a
     // person. The others are shorter stories and make more sense once this is seen.
-    PATHS[1].id,
+    PATHS[0].id,
   );
   const scenario = scenarios.find((s) => s.id === scenarioId)!;
 
@@ -115,29 +115,38 @@ export default function App() {
             {atEnd ? "Replay" : playing ? "Pause" : "Play"}
           </button>
 
-          <div className="flex gap-px bg-rule">
-            <button
-              type="button"
-              onClick={() => {
-                setPlaying(false);
-                setStep((s) => Math.max(0, s - 1));
-              }}
-              className="font-plate bg-plate px-3 py-1.5 text-[12px] text-ink-soft hover:bg-rule-faint"
-              aria-label="Previous step"
-            >
-              &larr;
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setPlaying(false);
-                setStep((s) => Math.min(total - 1, s + 1));
-              }}
-              className="font-plate bg-plate px-3 py-1.5 text-[12px] text-ink-soft hover:bg-rule-faint"
-              aria-label="Next step"
-            >
-              &rarr;
-            </button>
+          <div className="flex items-stretch gap-px border border-rule bg-rule">
+            {[
+              { dir: -1 as const, glyph: "◀", text: "Back", label: "Previous step" },
+              { dir: 1 as const, glyph: "▶", text: "Next", label: "Next step" },
+            ].map(({ dir, glyph, text, label }) => {
+              const blocked = dir < 0 ? step === 0 : step >= total - 1;
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => {
+                    setPlaying(false);
+                    setStep((n) => Math.min(total - 1, Math.max(0, n + dir)));
+                  }}
+                  disabled={blocked}
+                  aria-label={label}
+                  className="font-plate flex items-center gap-1.5 bg-plate px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink transition-colors hover:bg-rule-faint disabled:cursor-not-allowed disabled:text-rule"
+                >
+                  {dir < 0 ? (
+                    <>
+                      <span aria-hidden className="text-[9px]">{glyph}</span>
+                      {text}
+                    </>
+                  ) : (
+                    <>
+                      {text}
+                      <span aria-hidden className="text-[9px]">{glyph}</span>
+                    </>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <input
