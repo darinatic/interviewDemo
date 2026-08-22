@@ -406,8 +406,8 @@ export function Flow({
               {scenario.gatesPassed
                 ? "Every gate clear, nothing needed a person. This build ships to production."
                 : needsReviewer
-                  ? "The reviewer failed the build. The suite exits non-zero and it does not ship to production."
-                  : "Gates failed. The suite exits non-zero and the build does not ship to production."}
+                  ? "The reviewer failed the build. It does not ship to production."
+                  : "Gates failed. The build does not ship to production."}
             </p>
           </div>
         ) : null}

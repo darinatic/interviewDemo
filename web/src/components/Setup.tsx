@@ -18,19 +18,14 @@ export function Setup({ scenario }: { scenario: Scenario }) {
 
   return (
     <div className="mx-auto max-w-[760px] space-y-4">
-      <div className="plate p-5">
-        <Label>The rubric</Label>
-        <p className="font-plate mt-2 text-[15px] font-semibold">
-          {criterion?.label}
-          <span className="datum ml-2 text-[11px] font-normal text-ink-soft">
-            pass / fail
-          </span>
+    <div className="plate p-5">
+        <Label>The scenario</Label>
+        <p className="mt-2 text-[14px] leading-relaxed">
+          The <strong>conversational system</strong> under evaluation plays the{" "}
+          <strong>guest</strong>. The <strong>simulated user</strong> plays the{" "}
+          <strong>front-office staff member</strong> being trained on the dispute.
         </p>
-        <p className="mt-2 max-w-[70ch] text-[15px] leading-relaxed">{criterion?.rubric}</p>
-        <p className="mt-3 border-l-2 border-rule pl-3 text-[14px] leading-relaxed text-ink-soft">
-          Every judge scores against this exact text, and every judge must quote the words
-          it based that score on.
-        </p>
+        <p className="mt-2 text-[14px] leading-relaxed">{scenario.facts}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -60,14 +55,19 @@ export function Setup({ scenario }: { scenario: Scenario }) {
         </div>
 
         <div className="plate p-5">
-          <Label>The scenario</Label>
-          <p className="mt-2 text-[14px] leading-relaxed">
-            The <strong>conversational system</strong> under evaluation plays the{" "}
-            <strong>guest</strong>. The <strong>simulated user</strong> plays the{" "}
-            <strong>front-office staff member</strong> being trained on the dispute.
-          </p>
-          <p className="mt-2 text-[14px] leading-relaxed">{scenario.facts}</p>
-        </div>
+        <Label>The rubric</Label>
+        <p className="font-plate mt-2 text-[15px] font-semibold">
+          {criterion?.label}
+          <span className="datum ml-2 text-[11px] font-normal text-ink-soft">
+            pass / fail
+          </span>
+        </p>
+        <p className="mt-2 max-w-[70ch] text-[15px] leading-relaxed">{criterion?.rubric}</p>
+        <p className="mt-3 border-l-2 border-rule pl-3 text-[14px] leading-relaxed text-ink-soft">
+          Every judge scores against this exact text, and every judge must quote the words
+          it based that score on.
+        </p>
+      </div>
       </div>
     </div>
   );
