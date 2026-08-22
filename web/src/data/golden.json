@@ -1,0 +1,346 @@
+{
+  "consensus": [
+    {
+      "name": "ordinal unanimous",
+      "criterion": {
+        "key": "pedagogy",
+        "kind": "ordinal",
+        "failAtOrBelow": 2
+      },
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "expected": {
+        "consensus": 4.0,
+        "agreement": 1.0,
+        "dispersion": 0.0,
+        "contested": false
+      }
+    },
+    {
+      "name": "ordinal one dissenter",
+      "criterion": {
+        "key": "pedagogy",
+        "kind": "ordinal",
+        "failAtOrBelow": 2
+      },
+      "scores": [
+        4,
+        4,
+        1
+      ],
+      "expected": {
+        "consensus": 4.0,
+        "agreement": 0.25,
+        "dispersion": 3.0,
+        "contested": true
+      }
+    },
+    {
+      "name": "ordinal wide split",
+      "criterion": {
+        "key": "pedagogy",
+        "kind": "ordinal",
+        "failAtOrBelow": 2
+      },
+      "scores": [
+        2,
+        3,
+        5
+      ],
+      "expected": {
+        "consensus": 3.0,
+        "agreement": 0.25,
+        "dispersion": 3.0,
+        "contested": true
+      }
+    },
+    {
+      "name": "ordinal adjacent noise",
+      "criterion": {
+        "key": "pedagogy",
+        "kind": "ordinal",
+        "failAtOrBelow": 2
+      },
+      "scores": [
+        3,
+        4,
+        4
+      ],
+      "expected": {
+        "consensus": 4.0,
+        "agreement": 0.75,
+        "dispersion": 1.0,
+        "contested": false
+      }
+    },
+    {
+      "name": "ordinal five judges",
+      "criterion": {
+        "key": "pedagogy",
+        "kind": "ordinal",
+        "failAtOrBelow": 2
+      },
+      "scores": [
+        2,
+        2,
+        3,
+        4,
+        4
+      ],
+      "expected": {
+        "consensus": 3.0,
+        "agreement": 0.5,
+        "dispersion": 2.0,
+        "contested": true
+      }
+    },
+    {
+      "name": "binary unanimous pass",
+      "criterion": {
+        "key": "faithfulness",
+        "kind": "binary",
+        "failAtOrBelow": null
+      },
+      "scores": [
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "expected": {
+        "consensus": "pass",
+        "agreement": 1.0,
+        "dispersion": 0.0,
+        "contested": false
+      }
+    },
+    {
+      "name": "binary majority pass",
+      "criterion": {
+        "key": "faithfulness",
+        "kind": "binary",
+        "failAtOrBelow": null
+      },
+      "scores": [
+        "pass",
+        "pass",
+        "fail"
+      ],
+      "expected": {
+        "consensus": "pass",
+        "agreement": 0.666667,
+        "dispersion": 0.33333333333333337,
+        "contested": true
+      }
+    },
+    {
+      "name": "binary majority fail",
+      "criterion": {
+        "key": "faithfulness",
+        "kind": "binary",
+        "failAtOrBelow": null
+      },
+      "scores": [
+        "fail",
+        "fail",
+        "pass"
+      ],
+      "expected": {
+        "consensus": "fail",
+        "agreement": 0.666667,
+        "dispersion": 0.33333333333333337,
+        "contested": true
+      }
+    },
+    {
+      "name": "binary unanimous fail",
+      "criterion": {
+        "key": "faithfulness",
+        "kind": "binary",
+        "failAtOrBelow": null
+      },
+      "scores": [
+        "fail",
+        "fail",
+        "fail"
+      ],
+      "expected": {
+        "consensus": "fail",
+        "agreement": 1.0,
+        "dispersion": 0.0,
+        "contested": false
+      }
+    }
+  ],
+  "legalActions": [
+    {
+      "name": "clean",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 1,
+        "panel_size": 3,
+        "criteria": {
+          "pedagogy": {
+            "contested": false,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 0,
+      "budgetTotal": 80,
+      "expected": [
+        "accept"
+      ]
+    },
+    {
+      "name": "contested round 0",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 1,
+        "panel_size": 3,
+        "criteria": {
+          "pedagogy": {
+            "contested": true,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 0,
+      "budgetTotal": 80,
+      "expected": [
+        "resample",
+        "human_tiebreak"
+      ]
+    },
+    {
+      "name": "contested round 1",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 3,
+        "panel_size": 3,
+        "criteria": {
+          "pedagogy": {
+            "contested": true,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 1,
+      "budgetTotal": 80,
+      "expected": [
+        "widen_panel",
+        "human_tiebreak"
+      ]
+    },
+    {
+      "name": "contested round 2",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 3,
+        "panel_size": 3,
+        "criteria": {
+          "pedagogy": {
+            "contested": true,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 2,
+      "budgetTotal": 80,
+      "expected": [
+        "human_tiebreak"
+      ]
+    },
+    {
+      "name": "contested panel already 5",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 3,
+        "panel_size": 5,
+        "criteria": {
+          "pedagogy": {
+            "contested": true,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 1,
+      "budgetTotal": 80,
+      "expected": [
+        "human_tiebreak"
+      ]
+    },
+    {
+      "name": "agreed failure",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 1,
+        "panel_size": 3,
+        "criteria": {
+          "faithfulness": {
+            "contested": false,
+            "failed": true,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 0,
+      "budgetTotal": 80,
+      "expected": [
+        "human_confirm"
+      ]
+    },
+    {
+      "name": "unverified evidence",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 1,
+        "panel_size": 3,
+        "criteria": {
+          "faithfulness": {
+            "contested": true,
+            "failed": true,
+            "unverified_judges": [
+              "judge-0"
+            ]
+          }
+        }
+      },
+      "roundsUsed": 0,
+      "budgetTotal": 80,
+      "expected": [
+        "judge_defect",
+        "resample",
+        "human_tiebreak",
+        "human_confirm"
+      ]
+    },
+    {
+      "name": "budget exhausted",
+      "entry": {
+        "scenario": "demo",
+        "n_transcripts": 1,
+        "panel_size": 3,
+        "criteria": {
+          "pedagogy": {
+            "contested": true,
+            "failed": false,
+            "unverified_judges": []
+          }
+        }
+      },
+      "roundsUsed": 0,
+      "budgetTotal": 0,
+      "expected": [
+        "human_tiebreak"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+results.json
+labels.json
+.pytest_cache/
+mlflow.db
+mlartifacts/
+mlruns/
+*.egg-info/
+.deepeval
+web/node_modules/
+web/dist/
+
+# Working notes, not for a repo other people read. CLAUDE.md and the specs discuss the
+# interview itself, characterise the people in it, and record a personal accessibility
+# detail. None of that belongs in a public artifact.
+CLAUDE.md
+docs/
+DOCS.pdf

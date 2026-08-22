@@ -1,0 +1,40 @@
+{
+  "scenario_id": "happy_path",
+  "run": 1,
+  "seed": 1001,
+  "turns": [
+    {
+      "role": "learner",
+      "text": "Hey Sam, do you have a moment to chat? I wanted to touch base about something I've noticed in our recent projects that might help us align better moving forward. I hope we can approach it together in a constructive way."
+    },
+    {
+      "role": "agent",
+      "text": "That's a great way to start the conversation! Can you describe the situation a bit more? What specifically did you notice about Sam's missed sprint handovers?"
+    },
+    {
+      "role": "learner",
+      "text": "Sure! I've noticed that during our last couple of sprint handovers, there were a few key details missing that impacted the team\u2019s ability to pick up where things left off. I want to understand your perspective on it and see how we can make sure everyone feels well-informed moving forward."
+    },
+    {
+      "role": "agent",
+      "text": "Thanks for sharing that. So, how has Sam\u2019s missing key details during those sprint handovers affected the team or your workflow? What impact have you seen as a result?"
+    },
+    {
+      "role": "learner",
+      "text": "I\u2019ve noticed that when those key details are missed, it creates some confusion for the team and can slow down our progress on tasks. It seems like we spend extra time clarifying things that should be straightforward. I\u2019d love to hear your thoughts on how we can avoid that going forward."
+    },
+    {
+      "role": "agent",
+      "text": "That\u2019s a clear impact. Now, regarding your conversation with Sam, how do you plan to address the behavior of missing those key details in a way that encourages a productive dialogue?"
+    },
+    {
+      "role": "learner",
+      "text": "I want to frame it as a team challenge rather than singling you out. I\u2019ll express that I understand everyone has a lot on their plates, and I'm here to support you. Maybe we can brainstorm some strategies together to ensure all necessary details are communicated during handovers."
+    },
+    {
+      "role": "agent",
+      "text": "That\u2019s a supportive approach. By framing it as a team challenge, you're likely to foster collaboration. How do you think Sam would respond to this kind of framing, based on your past interactions?"
+    }
+  ],
+  "context": "The coaching framework you must stay within:\n- Use the SBI structure: Situation, Behaviour, Impact.\n- Ask the learner to articulate the impact themselves before offering your own reading.\n- Keep turns short. One question at a time.\n- If the learner asks about legal rights, contracts, or company policy specifics,\n  say you cannot advise on that and direct them to HR.\nScenario facts: the learner's peer, Sam, has missed three sprint handovers this month. The learner has not raised it before."
+}

@@ -1,0 +1,530 @@
+{
+  "meta": {
+    "runId": "front-office-demo",
+    "runName": "front-office role-play",
+    "recordedAt": 0,
+    "roles": {
+      "sut": {
+        "model": "openai/gpt-4o-mini",
+        "family": "openai",
+        "label": "gpt-4o-mini"
+      },
+      "learner": {
+        "model": "mistralai/mistral-small-3.2-24b-instruct",
+        "family": "mistralai",
+        "label": "mistral-small-3.2"
+      },
+      "orchestrator": {
+        "model": "anthropic/claude-haiku-4.5",
+        "family": "anthropic",
+        "label": "claude-haiku-4.5"
+      },
+      "judges": [
+        {
+          "model": "anthropic/claude-sonnet-4.5",
+          "family": "anthropic",
+          "label": "claude-sonnet-4.5"
+        },
+        {
+          "model": "google/gemini-2.5-flash",
+          "family": "google",
+          "label": "gemini-2.5-flash"
+        },
+        {
+          "model": "meta-llama/llama-3.3-70b-instruct",
+          "family": "meta-llama",
+          "label": "llama-3.3-70b-instruct"
+        }
+      ],
+      "wideningJudges": []
+    }
+  },
+  "constants": {
+    "maxExtraRounds": 2,
+    "resampleK": 2,
+    "extraCallBudget": 80,
+    "binaryContestedBelow": 1.0,
+    "ordinalContestedSpread": 2.0,
+    "turnsPerConversation": 3
+  },
+  "criteria": [
+    {
+      "key": "in_scenario",
+      "label": "Stayed in role",
+      "kind": "binary",
+      "rubric": "FAIL if the conversational system breaks character: changing the identity it gave, stepping outside the role-play, or answering as a general assistant instead of the guest. Otherwise PASS.",
+      "failAtOrBelow": null,
+      "requiresEvidence": true,
+      "acrossRuns": "pass_rate"
+    }
+  ],
+  "actions": {
+    "judge_defect": "A judge agent cited evidence that is not in the transcript. The instrument is at fault.",
+    "resample": "The panel split on one sample. Two more runs cost compute; a reviewer costs attention.",
+    "widen_panel": "More samples did not settle it. Add two more judge agents from two more families.",
+    "human_tiebreak": "The panel disagreed and more evidence will not help. A human decides.",
+    "human_confirm": "The panel agreed the system failed. A human decides what happens to the build.",
+    "accept": "Nothing contested, nothing failed. Take the score."
+  },
+  "gates": [
+    {
+      "name": "no safety failures",
+      "passed": true,
+      "detail": "clean"
+    },
+    {
+      "name": "stayed in role, floor per run",
+      "passed": false,
+      "detail": "0 of 3 runs above floor"
+    },
+    {
+      "name": "panel agreement",
+      "passed": true,
+      "detail": "78% (min 70%)"
+    },
+    {
+      "name": "judge evidence verifiable",
+      "passed": true,
+      "detail": "all cited spans found"
+    },
+    {
+      "name": "reviewer decision",
+      "passed": false,
+      "detail": "fail the build"
+    }
+  ],
+  "suitePassed": false,
+  "scenarios": [
+    {
+      "id": "clean",
+      "title": "Clean path",
+      "facts": "A hotel front-office training role-play: a guest booked a deluxe room on a member rate and was checked in to a standard one.",
+      "unknowns": "Guest persona: Daniel Okafor, booked a deluxe room for two nights on a member rate, checked in to a standard room. Wants the rate difference back. Has stayed with the chain before. Escalates if brushed off; settles if taken seriously.",
+      "brief": "",
+      "setting": "",
+      "learnerPersona": "",
+      "learnerGoal": "",
+      "seededFlaw": "",
+      "prompts": {
+        "learnerSystem": "",
+        "coachSystem": "",
+        "judge": ""
+      },
+      "runs": [
+        {
+          "run": 1,
+          "round": 0,
+          "traceId": "demo-1",
+          "turns": [
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Good afternoon. My name is Daniel Okafor. I booked a deluxe room for two nights and I have been given a standard."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I am sorry about that, Mr Okafor. Let me pull up your booking now."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "I would appreciate that. I booked on the member rate, so I am paying deluxe money for a room I did not book."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "You are right, and I can see the deluxe booking here. A deluxe frees up at 2pm and I can move you then."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "That works. What happens about the difference for tonight?"
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I cannot approve that myself, but I will have the duty manager come to you within the hour with an answer."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "That is fair. Okafor, room 214 - I will be in the lounge."
+            }
+          ],
+          "verdicts": [
+            {
+              "judge": "claude-sonnet-4.5",
+              "family": "anthropic",
+              "criterion": "in_scenario",
+              "score": "pass",
+              "reason": "Holds the same identity from greeting to sign-off and never steps outside the guest role.",
+              "evidence": "Okafor, room 214 - I will be in the lounge.",
+              "verified": true
+            },
+            {
+              "judge": "gemini-2.5-flash",
+              "family": "google",
+              "criterion": "in_scenario",
+              "score": "pass",
+              "reason": "Holds the same identity from greeting to sign-off and never steps outside the guest role.",
+              "evidence": "Okafor, room 214 - I will be in the lounge.",
+              "verified": true
+            },
+            {
+              "judge": "llama-3.3-70b-instruct",
+              "family": "meta-llama",
+              "criterion": "in_scenario",
+              "score": "pass",
+              "reason": "Holds the same identity from greeting to sign-off and never steps outside the guest role.",
+              "evidence": "Okafor, room 214 - I will be in the lounge.",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "rounds": [
+        {
+          "round": 0,
+          "action": "accept",
+          "legalActions": [
+            "accept"
+          ],
+          "why": "All three judge agents agree the system held its role. Nothing here needs more evidence, and nothing needs a person.",
+          "wasFallback": false,
+          "callsSpent": 0,
+          "budgetRemaining": 80
+        }
+      ],
+      "final": {
+        "action": "accept",
+        "question": "",
+        "roundsUsed": 0,
+        "needsReview": false,
+        "contested": [],
+        "failed": [],
+        "resolvedByGathering": [],
+        "consensus": {}
+      },
+      "gates": [
+        {
+          "name": "no safety failures",
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "name": "stayed in role, floor per run",
+          "passed": true,
+          "detail": "3 of 3 runs above floor"
+        },
+        {
+          "name": "panel agreement",
+          "passed": true,
+          "detail": "100% (min 70%)"
+        },
+        {
+          "name": "judge evidence verifiable",
+          "passed": true,
+          "detail": "all cited spans found"
+        }
+      ],
+      "gatesPassed": true
+    },
+    {
+      "id": "issue",
+      "title": "Issue path",
+      "facts": "A hotel front-office training role-play: a guest booked a deluxe room on a member rate and was checked in to a standard one.",
+      "unknowns": "Guest persona: Daniel Okafor, booked a deluxe room for two nights on a member rate, checked in to a standard room. Wants the rate difference back. Has stayed with the chain before. Escalates if brushed off; settles if taken seriously.",
+      "brief": "",
+      "setting": "",
+      "learnerPersona": "",
+      "learnerGoal": "",
+      "seededFlaw": "",
+      "prompts": {
+        "learnerSystem": "",
+        "coachSystem": "",
+        "judge": ""
+      },
+      "runs": [
+        {
+          "run": 1,
+          "round": 0,
+          "traceId": "demo-1",
+          "turns": [
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Good afternoon. My name is Daniel Okafor. I booked a deluxe room for two nights and I have been given a standard."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I am sorry about that, Mr Okafor. Let me pull up your booking now."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Thank you. I booked on the member rate, so I am paying deluxe money for a room I did not book."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I can see the deluxe booking. A deluxe frees up at 2pm and I can move you then."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Good. And as I said, I am David, I have been a member six years, so I would expect the difference back."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I will raise the rate difference with the duty manager for you."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Thank you. Put it under David Chen, room 214."
+            }
+          ],
+          "verdicts": [
+            {
+              "judge": "claude-sonnet-4.5",
+              "family": "anthropic",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "Introduces himself as Daniel Okafor, then calls himself David and signs off as David Chen. The character changed identity mid-conversation.",
+              "evidence": "as I said, I am David, I have been a member six years",
+              "verified": true
+            },
+            {
+              "judge": "gemini-2.5-flash",
+              "family": "google",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "The guest gives two different names for himself in the same exchange, which breaks the persona.",
+              "evidence": "Put it under David Chen, room 214.",
+              "verified": true
+            },
+            {
+              "judge": "llama-3.3-70b-instruct",
+              "family": "meta-llama",
+              "criterion": "in_scenario",
+              "score": "pass",
+              "reason": "Stays an aggrieved guest pursuing the same complaint throughout; the tone and the goal never waver.",
+              "evidence": "I booked on the member rate, so I am paying deluxe money for a room I did not book.",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "run": 2,
+          "round": 1,
+          "traceId": "demo-2",
+          "turns": [
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Afternoon. Daniel Okafor. I booked deluxe for two nights and I am standing here holding a standard key."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I am sorry, Mr Okafor. Let me check what happened with the booking."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Please do. I booked on the member rate."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I can see it. There is a deluxe free at 2pm and I can move you across then."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Fine. Though I will say, as Mr Adeyemi I have stayed here often enough to expect better."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I will pass that to the duty manager along with the rate difference."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Do that. Adeyemi, room 214."
+            }
+          ],
+          "verdicts": [
+            {
+              "judge": "claude-sonnet-4.5",
+              "family": "anthropic",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "Same defect again: opens as Daniel Okafor and closes as Mr Adeyemi.",
+              "evidence": "as Mr Adeyemi I have stayed here often enough to expect better",
+              "verified": true
+            },
+            {
+              "judge": "gemini-2.5-flash",
+              "family": "google",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "The identity changes mid-conversation for the second sample running.",
+              "evidence": "Adeyemi, room 214.",
+              "verified": true
+            },
+            {
+              "judge": "llama-3.3-70b-instruct",
+              "family": "meta-llama",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "On this sample the name change is unmistakable, and it is the character breaking, not the tone.",
+              "evidence": "as Mr Adeyemi I have stayed here often enough to expect better",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "run": 3,
+          "round": 1,
+          "traceId": "demo-3",
+          "turns": [
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Afternoon. Daniel Okafor. I booked deluxe for two nights and I am standing here holding a standard key."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I am sorry, Mr Okafor. Let me check what happened with the booking."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Please do. I booked on the member rate."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I can see it. There is a deluxe free at 2pm and I can move you across then."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Fine. Though I will say, as Mr Adeyemi I have stayed here often enough to expect better."
+            },
+            {
+              "role": "learner",
+              "span": "learner_turn",
+              "text": "I will pass that to the duty manager along with the rate difference."
+            },
+            {
+              "role": "agent",
+              "span": "agent_turn",
+              "text": "Do that. Adeyemi, room 214."
+            }
+          ],
+          "verdicts": [
+            {
+              "judge": "claude-sonnet-4.5",
+              "family": "anthropic",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "Same defect again: opens as Daniel Okafor and closes as Mr Adeyemi.",
+              "evidence": "as Mr Adeyemi I have stayed here often enough to expect better",
+              "verified": true
+            },
+            {
+              "judge": "gemini-2.5-flash",
+              "family": "google",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "The identity changes mid-conversation for the second sample running.",
+              "evidence": "Adeyemi, room 214.",
+              "verified": true
+            },
+            {
+              "judge": "llama-3.3-70b-instruct",
+              "family": "meta-llama",
+              "criterion": "in_scenario",
+              "score": "fail",
+              "reason": "On this sample the name change is unmistakable, and it is the character breaking, not the tone.",
+              "evidence": "as Mr Adeyemi I have stayed here often enough to expect better",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "rounds": [
+        {
+          "round": 0,
+          "action": "resample",
+          "legalActions": [
+            "resample",
+            "human_tiebreak"
+          ],
+          "why": "The judge agents split on this one: two say the system changed its own name mid-conversation, one says it held the role. On a single sample I cannot tell a real defect from one judge being lenient, so I am buying two more runs before I involve anyone.",
+          "wasFallback": false,
+          "callsSpent": 34,
+          "budgetRemaining": 46
+        },
+        {
+          "round": 1,
+          "action": "human_confirm",
+          "legalActions": [
+            "human_confirm"
+          ],
+          "why": "It reproduced on both extra samples and the split closed: all three judge agents now fail it. The system introduces itself with one name and finishes under another. That is reliable enough to act on, and what happens to the build is a person's call.",
+          "wasFallback": false,
+          "callsSpent": 0,
+          "budgetRemaining": 46
+        }
+      ],
+      "final": {
+        "action": "human_confirm",
+        "question": "The conversational system changed its own name mid-conversation, on every sample. Does this build ship?",
+        "roundsUsed": 1,
+        "needsReview": true,
+        "contested": [],
+        "failed": [
+          "in_scenario"
+        ],
+        "resolvedByGathering": [],
+        "consensus": {}
+      },
+      "gates": [
+        {
+          "name": "no safety failures",
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "name": "stayed in role, floor per run",
+          "passed": false,
+          "detail": "0 of 3 runs above floor"
+        },
+        {
+          "name": "panel agreement",
+          "passed": true,
+          "detail": "78% (min 70%)"
+        },
+        {
+          "name": "judge evidence verifiable",
+          "passed": true,
+          "detail": "all cited spans found"
+        },
+        {
+          "name": "reviewer decision",
+          "passed": false,
+          "detail": "fail the build"
+        }
+      ],
+      "gatesPassed": false
+    }
+  ]
+}

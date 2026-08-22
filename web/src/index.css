@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+@import "@fontsource/ibm-plex-sans-condensed/400.css";
+@import "@fontsource/ibm-plex-sans-condensed/500.css";
+@import "@fontsource/ibm-plex-sans-condensed/600.css";
+@import "@fontsource/ibm-plex-serif/400.css";
+@import "@fontsource/ibm-plex-serif/400-italic.css";
+@import "@fontsource/ibm-plex-serif/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* ---------------------------------------------------------------------------
+   DRAFTING PLATE
+
+   The subject is a system that measures its own reliability: panels, verdicts,
+   cited evidence, agreement, dispersion, thresholds, budgets. So the page is set
+   like an engineering drawing - construction rules, dimension lines and tolerance
+   bands used as working UI rather than as ornament.
+
+   SIGNAL COLOURS ARE BLUE / ORANGE / VIOLET, never red-green. The person this was
+   built for is red-green colourblind, and an earlier version of the sibling project
+   had to swap a green readout to blue for exactly this reason. Colour never carries
+   meaning alone here either: every state also has a distinct marker shape and a
+   position on a rail.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Ground and ink */
+  --color-ground: #eceff3; /* the drawing sheet */
+  --color-plate: #fcfdfe; /* a plate laid on the sheet */
+  --color-ink: #101a24; /* deep blue-black, not pure black */
+  --color-ink-soft: #46586a;
+  --color-rule: #b3c0cc; /* construction lines */
+  --color-rule-faint: #d7dee5;
+
+  /* Signal. Deuteranopia-safe by construction. */
+  --color-settled: #1d5fa8; /* the panel agreed */
+  --color-contested: #c2410c; /* the panel split */
+  --color-human: #6d3fa0; /* costs a person */
+  /* The orchestrator gets its OWN hue so it is findable at a glance in a diagram where
+     it appears three times. Amber against blue/violet/grey, and still nowhere near the
+     red-green axis. */
+  --color-orchestrator: #a65a00;
+  --color-orchestrator-wash: #fbeedd;
+  --color-settled-wash: #e4edf7;
+  --color-contested-wash: #fbeae1;
+  --color-human-wash: #efe9f7;
+
+  /* Type roles */
+  --font-plate: "IBM Plex Sans Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-prose: "IBM Plex Serif", ui-serif, Georgia, serif;
+  --font-data: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-prose);
+    /* The sheet itself: a faint 8px grid, the way squared drafting paper reads.
+       Low enough contrast that it never competes with content. */
+    background-image:
+      linear-gradient(to right, rgba(16, 26, 36, 0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 26, 36, 0.028) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+
+  /* Visible keyboard focus everywhere, in the ink colour rather than the browser's. */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .plate {
+    background: var(--color-plate);
+    border: 1px solid var(--color-rule);
+    /* Square. A drawing plate has corners. */
+    border-radius: 0;
+  }
+
+  /* Drawing-sheet label: small, condensed, letterspaced, uppercase. Used for
+     titles and field labels so the plate reads as an annotated drawing. */
+  .label {
+    font-family: var(--font-plate);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.6875rem;
+    color: var(--color-ink-soft);
+  }
+
+  .datum {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plate-title {
+    font-family: var(--font-plate);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+}
+
+/* The one orchestrated motion: markers land on the verdict rail in sequence, and
+   the dimension line draws itself. Everything else is static. */
+@keyframes marker-land {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dimension-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-land {
+  animation: marker-land 340ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.animate-dimension {
+  transform-origin: left center;
+  animation: dimension-draw 420ms cubic-bezier(0.16, 1, 0.3, 1) 240ms backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-land,
+  .animate-dimension {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FLOW: directional animation on the connectors.
+
+   The dashes march along the stroke in the direction the data travels, so an edge
+   that is currently carrying something is distinguishable from one that has already
+   fired. Direction is the information here - a static arrowhead says which way it
+   points, but not that it is happening now.
+--------------------------------------------------------------------------- */
+@keyframes march {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.edge-flowing {
+  stroke-dasharray: 6 6;
+  animation: march 700ms linear infinite;
+}
+
+@keyframes loop-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.loop-active {
+  animation: loop-pulse 1200ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-flowing,
+  .loop-active {
+    animation: none;
+  }
+}

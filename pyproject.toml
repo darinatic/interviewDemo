@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "conveval"
+version = "0.1.0"
+description = "Multi-agent LLM-as-a-judge evaluation for conversational agents"
+requires-python = ">=3.11"
+# Known-good as of 2026-08-21: mlflow 3.15.1, openai 3.3.1, Python 3.11.11.
+# Floors only, no upper pins: the suite was developed on mlflow 3.14 / openai 2.54 and
+# still runs clean on the versions above, so drift within 3.x has been tolerable.
+dependencies = [
+  # OpenRouter is OpenAI-API-compatible, so one SDK reaches every model family.
+  "openai>=1.50",
+  "langgraph>=0.2",
+  "mlflow>=2.16",
+  "pydantic>=2",
+  "python-dotenv>=1.0",
+  "rich>=13",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+# Explicit, because flat-layout auto-discovery fails here: `tests/` and `fixtures/`
+# sit alongside the package at the top level and setuptools refuses to guess.
+[tool.setuptools]
+packages = ["conveval"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
