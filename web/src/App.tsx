@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { Cicd } from "./components/Cicd";
 import { Flow } from "./components/Flow";
 import { Setup } from "./components/Setup";
-import { Label } from "./components/primitives";
 import { STEP_MS, buildBeats, locate, totalSteps } from "./lib/film";
 import { HEADLINE_CRITERION } from "./lib/film";
 import type { NodeId } from "./lib/film";
@@ -37,6 +37,7 @@ export default function App() {
   const [playing, setPlaying] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [open, setOpen] = useState<NodeId | null>(null);
+  const [page, setPage] = useState<"pipeline" | "cicd">("pipeline");
   const timer = useRef<number | null>(null);
 
   const { beat: beatIndex, within } = locate(beats, step);
@@ -72,25 +73,48 @@ export default function App() {
       <div className="sticky top-0 z-20">
       <header className="border-b border-rule bg-plate">
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-3 px-6 py-3">
-          <span className="plate-title text-[15px] uppercase tracking-[0.08em]">
-            Conversation&nbsp;Eval
-          </span>
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="plate-title text-[15px] uppercase tracking-[0.08em]">
+              Conversation&nbsp;Eval
+            </span>
+            <div className="flex items-center gap-px bg-rule">
+              {([
+                ["pipeline", "The walkthrough"],
+                ["cicd", "How it fits into CI/CD"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setPage(key)}
+                  aria-pressed={page === key}
+                  className={`font-plate px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
+                    page === key ? "bg-ink text-plate" : "bg-plate text-ink-soft hover:bg-rule-faint"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="label">Pick a path</span>
             {PATHS.map((s) => (
               <button
                 key={s.id}
                 type="button"
-                onClick={() => setScenarioId(s.id)}
-                aria-pressed={s.id === scenarioId}
+                onClick={() => {
+                  setScenarioId(s.id);
+                  setPage("pipeline");
+                }}
+                aria-pressed={s.id === scenarioId && page === "pipeline"}
                 className={`font-plate border-2 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.1em] transition-colors ${
-                  s.id === scenarioId
+                  s.id === scenarioId && page === "pipeline"
                     ? "bg-ink text-plate"
                     : "bg-plate text-ink hover:bg-rule-faint"
                 }`}
                 style={{
                   borderColor:
-                    s.id === scenarioId
+                    s.id === scenarioId && page === "pipeline"
                       ? "var(--color-ink)"
                       : s.id === "issue"
                         ? "var(--color-contested)"
@@ -105,6 +129,7 @@ export default function App() {
       </header>
 
       {/* Transport. A film you cannot pause is a film you cannot follow. */}
+      {page === "pipeline" ? (
       <div className="border-b border-rule bg-plate">
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center gap-4 px-6 py-3">
           <button
@@ -168,11 +193,13 @@ export default function App() {
           </span>
         </div>
       </div>
-
+      ) : null}
       </div>
 
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-6 py-8">
-        {beat.kind === "setup" ? (
+        {page === "cicd" ? (
+          <Cicd />
+        ) : beat.kind === "setup" ? (
           <Setup scenario={scenario} />
         ) : (
           <Flow
@@ -189,15 +216,6 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-rule bg-ground">
-        <div className="mx-auto flex max-w-[1100px] flex-wrap items-center gap-x-6 gap-y-1 px-6 py-2.5">
-          <Label>Illustrative walkthrough</Label>
-          <span className="text-[12px] text-ink-soft">
-            A worked example of the architecture. The scenario and the verdicts are
-            written to make the mechanism legible.
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }
